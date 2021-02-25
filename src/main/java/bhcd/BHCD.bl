@@ -1,0 +1,35 @@
+package bhcd
+
+
+model BHCD {
+  random GraphAdjMatrix graph // data
+  random BasicDendrogram dend ?: BasicDendrogram::initDend(graph) // parameter
+  random RealVar alpha ?: latentReal, beta ?: latentReal // hyperparameters
+  
+  //param RealVar alpha // hyperparameter // fixed values
+  //param RealVar beta // hyperparameter
+  
+  random RealVar theta ?: latentReal // mixture parameter for Zero-Inflated model
+  
+  random GraphSimulationMonitor monitor ?: new GraphSimulationMonitor(graph.vertices, alpha, beta, theta, dend)
+  
+  laws {
+  	
+  	// prior over dendrograms 
+  	dend ~ UniformDendrogram()
+    
+    // hyperpriors
+    alpha ~ Gamma(2.0, 0.5)
+    beta ~ Gamma(2.0, 0.5)
+    
+    if(!(theta instanceof RealConstant)) {
+    	theta ~ Beta(40.0, 2.0)
+    } 
+    
+    
+    // likelihood
+    graph | dend, alpha, beta, theta ~ LikelihoodComputerZI(dend, alpha, beta, theta)
+    
+    }
+    
+  }

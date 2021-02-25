@@ -1,0 +1,72 @@
+package bhcd
+
+import bhcd.GraphAdjMatrix.MutableGraphAdjMatrix
+
+model LikelihoodComputer {
+	
+	param BasicDendrogram dend // parameter
+	param RealVar alpha // hyperparameter
+	param RealVar beta // hyperparamter
+	random GraphAdjMatrix graph // data
+  
+	laws {
+		
+	
+  	logf(dend, alpha, beta, graph) {
+  		
+  		if (alpha <= 0.0 || beta <= 0.0) return NEGATIVE_INFINITY
+  		
+  	  // iterate over all internal nodes
+  	  // calculate logProbability for each internal node
+  	  // add to current sum
+  		
+  		var sum = 0.0;
+  		
+  		// get all internal tree nodes in dend
+  		// Note: there are n-1 internal nodes for n vertices
+  		val internalNodes = dend.getInternalNodes();
+  		
+  		for(BasicTreeNode r: internalNodes) {
+  			
+  			val Lr = dend.countLRleaves(r, true); // number of leaves in left subtree rooted at r
+  			val Rr = dend.countLRleaves(r, false); // number of leaves in right subtree rooted at r
+  			
+  			/**
+  			 * Calculate E_r, the number of edges in graph whose endpoints have r as their LCA in dend
+  			 */ 
+  			
+  			// extract the vertex IDs of the leaf nodes from the left and right subtrees rooted at r
+  			val left = dend.getLRSubtree(r, true);
+  			val right = dend.getLRSubtree(r, false);
+  			
+  			// by default, r must be the LCA between the leaf nodes in the sets 'left' and 'right'
+  			
+  			// count the number of edges in the graph between the left and right sets of vertices
+  			val Er = graph.countEdgesBetween(left, right);
+  			
+  			
+  			/**
+  			 * Compute the marginalized likelihood p(G | D, alpha, beta)
+  			 * equivalent to expression 3.4 * [1/B(alpha, beta)]^(n-1)
+  			 * 
+  			 * First, compute the log product of terms from Expression 3.4
+  			 */
+  			sum += lnGamma(Er + alpha) + lnGamma( (Lr * Rr) + beta - Er) - 
+  					lnGamma( (Lr * Rr) + alpha + beta);
+  		}
+  		
+  		// Finally, add the (n-1) * log 1/B(alpha, beta) term
+  		val nleaves = dend.getNumLeaves();
+  		sum += (nleaves - 1) * ( lnGamma(alpha + beta) - lnGamma(alpha) - lnGamma(beta) );
+      
+  		return(sum);
+  	}
+	
+	}
+	
+	generate (rand) {
+	  	(graph as MutableGraphAdjMatrix).sampleGraph(rand, alpha, beta, 0, dend);
+	  	// use argument theta=0 for standard model
+	}
+	
+}
