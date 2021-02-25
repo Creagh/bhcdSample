@@ -8,9 +8,9 @@ The code framework is implemented in Java, and interfaces with the probabilistic
 
 ## Examples
 
-The main codebase can be found in `src\main\java\bhcd`.
+The main codebase can be found in `src/main/java/bhcd`.
 
-[`BasicDendrogram.java`](src\main\java\bhcd\BasicDendrogram.java) contains the class for a dendrogram structure (rooted binary tree with labelled leaves), which is used to represent the hieararchical clustering structure. 
+[`BasicDendrogram.java`](src/main/java/bhcd/BasicDendrogram.java) contains the class for a dendrogram structure (rooted binary tree with labelled leaves), which is used to represent the hieararchical clustering structure. 
 
 The method `interchange(BasicTreeNode node, BasicTreeNode child)` performs a Nearest-Neighbour Interchange move, permuting the structure of the dendrogram, used within the Markov Chain Monte Carlo sampler that generates random samples from the posterior distribution.
 
