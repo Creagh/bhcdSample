@@ -2,7 +2,7 @@
 
 ## Summary
 
-This repository contains a sample of work, for an ongoing project, which includes an implementation of a fully Bayesian Hierarchical Community Discovery model for networks. This includes multiple model variaitions, aimed at learning clusters within a network (or graph). These models are based on the work by Clauset et al. [1]. 
+This repository contains a sample of work for an ongoing project. It includes an implementation of a Bayesian Hierarchical Community Discovery model for networks. There are multiple model variaitions, each aimed at learning clusters within a network (or graph). These models are based on the work by Clauset et al. [1]. 
 
 The code framework is implemented in Java, and interfaces with the probabilistic programming language, [Blang](https://www.stat.ubc.ca/~bouchard/blang/).
 
